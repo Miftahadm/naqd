@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naqd Tadris</title>
+    <title>EvalTeach</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
@@ -83,7 +83,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Naqd Tadris</h1>
+        <h1>EvalTeach</h1>
         
         <form id="naqdForm">
             <!-- Basic Information -->
@@ -230,20 +230,20 @@
         });
 
         // PDF Generation
-        document.getElementById('generatePDF').addEventListener('click', function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Add content to PDF
-            doc.setFontSize(18);
-            doc.text('Naqd Tadris', 105, 20, { align: 'center' });
-            
-            doc.setFontSize(12);
-            doc.text(`Muntaqid: ${document.getElementById('muntaqid').value}`, 20, 40);
-            doc.text(`Pengajar: ${document.getElementById('pengajar').value}`, 20, 50);
-            doc.text(`Tanggal: ${document.getElementById('tanggal').value}`, 20, 60);
-            doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, 20, 70);
-            doc.text(`Kelas: ${document.getElementById('kelas').value}`, 20, 80);
+document.getElementById('generatePDF').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Add basic information to PDF
+    doc.setFontSize(18);
+    doc.text('EvalTeach', 105, 20, { align: 'center' });
+
+    doc.setFontSize(12);
+    doc.text(`Muntaqid: ${document.getElementById('muntaqid').value}`, 20, 40);
+    doc.text(`Pengajar: ${document.getElementById('pengajar').value}`, 20, 50);
+    doc.text(`Tanggal: ${document.getElementById('tanggal').value}`, 20, 60);
+    doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, 20, 70);
+    doc.text(`Kelas: ${document.getElementById('kelas').value}`, 20, 80);
 
     // Add Assessment Criteria to PDF
     let yPosition = 100; // Starting Y position for criteria
@@ -257,7 +257,7 @@
 
         // Add criteria title
         const title = item.querySelector('h3').textContent;
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.text(title, 20, yPosition);
         yPosition += 10;
 
@@ -280,28 +280,116 @@
         yPosition += 10; // Add spacing between criteria
     });
 
+    // Add images to PDF
+    const preview = document.getElementById('imagePreview');
+    const images = preview.getElementsByTagName('img');
 
-            // Add images
-            const preview = document.getElementById('imagePreview');
-            const images = preview.getElementsByTagName('img');
-            let yPosition = 100;
+    for (let i = 0; i < images.length; i++) {
+        if (yPosition > 250) { // Add new page if content exceeds page height
+            doc.addPage();
+            yPosition = 20;
+        }
+        try {
+            doc.addImage(images[i].src, 'JPEG', 20, yPosition, 170, 100);
+            yPosition += 110;
+        } catch (e) {
+            console.error('Error adding image to PDF:', e);
+        }
+    }
 
-            for (let i = 0; i < images.length; i++) {
-                if (yPosition > 250) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                try {
-                    doc.addImage(images[i].src, 'JPEG', 20, yPosition, 170, 100);
-                    yPosition += 110;
-                } catch (e) {
-                    console.error('Error adding image to PDF:', e);
-                }
-            }
+    // Save the PDF
+    doc.save('EvalTeach.pdf');
+});
+</script>
+<script>
+    document.getElementById('generatePDF').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4'); // Set ukuran ke A4
 
-            // Save the PDF
-            doc.save('Naqd Tadris.pdf');
+    // Margin dan ukuran halaman
+    const margin = 20; // Margin 20mm
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = margin; // Posisi Y awal
+
+    // Fungsi untuk menambahkan halaman baru
+    const addNewPage = () => {
+        doc.addPage();
+        yPosition = margin; // Reset posisi Y ke margin
+    };
+
+    // Add basic information to PDF
+    doc.setFontSize(18);
+    doc.text('EvalTeach', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
+
+    doc.setFontSize(12);
+    doc.text(`Muntaqid: ${document.getElementById('muntaqid').value}`, margin, yPosition);
+    yPosition += 10;
+    doc.text(`Pengajar: ${document.getElementById('pengajar').value}`, margin, yPosition);
+    yPosition += 10;
+    doc.text(`Tanggal: ${document.getElementById('tanggal').value}`, margin, yPosition);
+    yPosition += 10;
+    doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, margin, yPosition);
+    yPosition += 10;
+    doc.text(`Kelas: ${document.getElementById('kelas').value}`, margin, yPosition);
+    yPosition += 20;
+
+    // Add Assessment Criteria to PDF
+    const criteriaItems = document.querySelectorAll('.criteria-item');
+
+    criteriaItems.forEach((item) => {
+        // Cek jika perlu halaman baru
+        if (yPosition > pageHeight - margin) {
+            addNewPage();
+        }
+
+        // Add criteria title
+        const title = item.querySelector('h3').textContent;
+        doc.setFontSize(12);
+        doc.text(title, margin, yPosition);
+        yPosition += 10;
+
+        // Add checkbox options
+        const checkboxes = item.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+            const label = checkbox.nextSibling.textContent.trim();
+            const isChecked = checkbox.checked ? '[X]' : '[ ]';
+            doc.text(`${isChecked} ${label}`, margin + 5, yPosition);
+            yPosition += 10;
         });
-    </script>
+
+        // Add additional notes
+        const notes = item.querySelector('textarea').value;
+        if (notes) {
+            doc.text(`Catatan: ${notes}`, margin + 5, yPosition);
+            yPosition += 15;
+        }
+
+        yPosition += 10; // Add spacing between criteria
+    });
+
+    // Add images to PDF
+    const preview = document.getElementById('imagePreview');
+    const images = preview.getElementsByTagName('img');
+
+    for (let i = 0; i < images.length; i++) {
+        // Cek jika perlu halaman baru
+        if (yPosition > pageHeight - margin - 100) { // 100 adalah tinggi gambar
+            addNewPage();
+        }
+
+        try {
+            doc.addImage(images[i].src, 'JPEG', margin, yPosition, 170, 100);
+            yPosition += 110; // Tinggi gambar + margin bawah
+        } catch (e) {
+            console.error('Error adding image to PDF:', e);
+        }
+    }
+
+    // Save the PDF
+    doc.save('EvalTeach.pdf');
+});
+</script>
 </body>
 </html>
