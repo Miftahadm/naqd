@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naqd Tadris</title>
+    <!-- Using html2pdf library for better PDF generation with styling support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --success-color: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Form Styling */
+        .form-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Assessment Section Styling */
+        .criteria-section {
+            margin: 15px 0;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .criteria-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* Image Section Styling */
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Button Styling */
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Loading Overlay */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* PDF Preview Styling */
+        .pdf-content {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="naqdForm">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h2 class="criteria-title">Informasi Dasar</h2>
+                <div class="form-group">
+                    <label for="muntaqid">Nama Muntaqid:</label>
+                    <input type="text" id="muntaqid" required>
+                </div>
+                <div class="form-group">
+                    <label for="pengajar">Nama Pengajar:</label>
+                    <input type="text" id="pengajar" required>
+                </div>
+                <div class="form-group">
+                    <label for="tanggal">Tanggal:</label>
+                    <input type="date" id="tanggal" required>
+                </div>
+                <div class="form-group">
+                    <label for="mapel">Mata Pelajaran:</label>
+                    <input type="text" id="mapel" required>
+                </div>
+                <div class="form-group">
+                    <label for="kelas">Kelas:</label>
+                    <input type="text" id="kelas" required>
+                </div>
+            </div>
+
+            <!-- Assessment Criteria Section -->
+            <div class="form-section">
+                <h2 class="criteria-title">Kriteria Penilaian</h2>
+                
+                <!-- Kualitas Pengajaran -->
+                <div class="criteria-section">
+                    <h3>1. Kualitas Pengajaran</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="kualitas[]" value="penyampaian_jelas"> 
+                            Penyampaian materi jelas
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="kualitas[]" value="metode_efektif"> 
+                            Metode pengajaran efektif
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="kualitas[]" value="suasana_kondusif"> 
+                            Suasana belajar kondusif
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="catatan_kualitas">Catatan:</label>
+                        <textarea id="catatan_kualitas" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Keterampilan Komunikasi -->
+                <div class="criteria-section">
+                    <h3>2. Keterampilan Komunikasi</h3>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="komunikasi[]" value="komunikasi_baik"> 
+                            Komunikasi efektif dengan siswa
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="komunikasi[]" value="adaptasi_bahasa"> 
+                            Adaptasi bahasa sesuai audiens
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="catatan_komunikasi">Catatan:</label>
+                        <textarea id="catatan_komunikasi" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <!-- Add sections for other criteria -->
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="form-section">
+                <h2 class="criteria-title">Dokumentasi</h2>
+                <div class="form-group">
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display: none">
+                    <button type="button" class="btn" onclick="document.getElementById('imageInput').click()">
+                        Pilih File Gambar
+                    </button>
+                    <button type="button" class="btn" onclick="startCamera()">
+                        Ambil Foto
+                    </button>
+                    <div class="image-preview" id="imagePreview"></div>
+                    <video id="camera" style="display: none; width: 100%; max-width: 400px;"></video>
+                    <button type="button" id="captureBtn" style="display: none;" class="btn">
+                        Ambil Foto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="btn-group">
+                <button type="button" class="btn" onclick="generatePDF()">Download PDF</button>
+                <button type="button" class="btn" onclick="sharePDF()">Kirim ke WhatsApp</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loadingOverlay">
+        <div class="loading-content">
+            <h3>Memproses...</h3>
+            <p>Mohon tunggu sebentar.</p>
+        </div>
+    </div>
+
+    <!-- Hidden div for PDF generation -->
+    <div id="pdfContent" class="pdf-content">
+        <!-- Content will be populated by JavaScript -->
+    </div>
+
+    <script>
+        // Image handling
+        let imageDataUrls = [];
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            handleImageFiles(e.target.files);
+        });
+
+        function handleImageFiles(files) {
+            for (const file of files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageDataUrls.push(e.target.result);
+                    updateImagePreview();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            imageDataUrls.forEach((dataUrl, index) => {
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.className = 'preview-image';
+                preview.appendChild(img);
+            });
+        }
+
+        // Camera handling
+        async function startCamera() {
+            const camera = document.getElementById('camera');
+            const captureBtn = document.getElementById('captureBtn');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                camera.srcObject = stream;
+                camera.style.display = 'block';
+                captureBtn.style.display = 'block';
+                camera.play();
+            } catch (err) {
+                alert('Error accessing camera: ' + err.message);
+            }
+        }
+
+        document.getElementById('captureBtn').addEventListener('click', function() {
+            const camera = document.getElementById('camera');
+            const canvas = document.createElement('canvas');
+            canvas.width = camera.videoWidth;
+            canvas.height = camera.videoHeight;
+            canvas.getContext('2d').drawImage(camera, 0, 0);
+            
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            imageDataUrls.push(dataUrl);
+            updateImagePreview();
+
+            // Stop camera
+            camera.srcObject.getTracks().forEach(track => track.stop());
+            camera.style.display = 'none';
+            this.style.display = 'none';
+        });
+
+        // PDF generation
+        async function generatePDF() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.style.display = 'flex';
+
+            // Create PDF content
+            const pdfContent = document.getElementById('pdfContent');
+            pdfContent.innerHTML = `
+                <div style="padding: 20px;">
+                    <h1 style="text-align: center; color: #2563eb;">Naqd Tadris</h1>
+                    <div style="margin-top: 20px;">
+                        <p><strong>Muntaqid:</strong> ${document.getElementById('muntaqid').value}</p>
+                        <p><strong>Pengajar:</strong> ${document.getElementById('pengajar').value}</p>
+                        <p><strong>Tanggal:</strong> ${document.getElementById('tanggal').value}</p>
+                        <p><strong>Mata Pelajaran:</strong> ${document.getElementById('mapel').value}</p>
+                        <p><strong>Kelas:</strong> ${document.getElementById('kelas').value}</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h2>Hasil Penilaian</h2>
+                        ${generateAssessmentHTML()}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h2>Dokumentasi</h2>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${generateImagesHTML()}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const opt = {
+                    margin: 1,
+                    filename: 'Naqd Tadris.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                const pdf = await html2pdf().set(opt).from(pdfContent).save();
+                loadingOverlay.style.display = 'none';
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        function generateAssessmentHTML() {
+            let html = '';
+            
+            // Get all criteria sections
+            const criteriaSections = document.getElementsByClassName('criteria-section');
+            for (const section of criteriaSections) {
+                const title = section.getElementsByTagName('h3')[0].textContent;
+                const checkboxes = section.getElementsByTagName('input');
+                const textarea = section.getElementsByTagName('textarea')[0];
+                
+                html += `<div style="margin-top: 15px;">
+                    <h3 style="color: #2563eb;">${title}</h3>
+                    <ul style="list-style-type: none; padding-left: 20px;">`;
+                
+                for (const checkbox of checkboxes) {
+                    if (checkbox.type === 'checkbox') {
+                        html += `<li style="margin: 5px 0;">
+                            ${checkbox.checked ? '✓' : '✗'} ${checkbox.nextSibling.textContent}
+                        </li>`;
+                    }
+                }
+                
+                if (textarea && textarea.value) {
+                    html += `<li style="margin-top: 10px;">
+                        <strong>Catatan:</strong> ${textarea.value}
+                    </li>`;
+                }
+                
+                html += `</ul></div>`;
+            }
+            
+            return html;
+        }
+
+        function generateImagesHTML() {
+            return imageDataUrls.map(dataUrl => 
+                `<img src="${dataUrl
