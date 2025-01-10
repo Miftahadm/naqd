@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EvalTeach</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>EvalTeach</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background-color: #f0f2f5;
+        }
+        .header {
+            background: linear-gradient(45deg, #2196F3, #00BCD4);
+            color: white;
             padding: 20px;
-            background-color: #f5f5f5;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
         .container {
-            background-color: white;
+            background: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .form-group {
             margin-bottom: 15px;
@@ -27,90 +38,264 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input[type="text"],
-        input[type="date"],
-        textarea {
+        input[type="text"], textarea, select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .assessment-section {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .criteria-item {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .image-preview img {
-            max-width: 200px;
-            max-height: 200px;
-            object-fit: cover;
-        }
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             margin: 5px;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #29e8d8;
         }
-        .camera-container {
-            margin: 20px 0;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        #video {
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .image-preview {
+            max-width: 200px;
+            margin-top: 10px;
+        }
+
+        /* Dropdown Button */
+.dropbtn {
+    background-color: transparent;
+    color: white;
+    padding: 10px;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+        :root {
+            --primary-color: #bb6441;
+            --secondary-color: #1e40af;
+            --background-color: #f3f4f6;
+            --text-color: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #camera-container {
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        #camera-container video {
             width: 100%;
             max-width: 400px;
-            margin-bottom: 10px;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
         }
+
+        .required {
+            color: #dc2626;
+            margin-left: 0.25rem;
+        }
+
     </style>
-</head>
 <body>
-    <div class="container">
+    <div class="header".header {
+    background: linear-gradient(45deg, #2196F3, #00BCD4);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    position: relative; /* Tambahkan ini */
+}>
+
+
         <h1>EvalTeach</h1>
-        
-        <form id="naqdForm">
-            <!-- Basic Information -->
-            <div class="form-group">
-                <label for="muntaqid">Nama Muntaqid:</label>
-                <input type="text" id="muntaqid" required>
-            </div>
+        <h2>Preview KBM Kelas</h2>
+    </div>
+</div>
 
-            <div class="form-group">
-                <label for="pengajar">Nama Pengajar:</label>
-                <input type="text" id="pengajar" required>
-            </div>
+    <div class="container">
+        <div class="form-group">
+            <label for="muntaqid">Nama Muntaqid:</label>
+            <input type="text" id="muntaqid" required>
+        </div>
 
-            <div class="form-group">
-                <label for="tanggal">Tanggal:</label>
-                <input type="date" id="tanggal" required>
-            </div>
+        <div class="form-group">
+            <label>Nama Guru:</label>
+            <input type="text" id="namaGuru">
+        </div>
 
-            <div class="form-group">
-                <label for="mapel">Mata Pelajaran:</label>
-                <input type="text" id="mapel" required>
-            </div>
+        <div class="form-group">
+            <label>Tanggal Mengajar:</label>
+            <input type="date" id="tanggalMengajar">
+        </div>
 
-            <div class="form-group">
-                <label for="kelas">Kelas:</label>
-                <input type="text" id="kelas" required>
-            </div>
+        <div class="form-group">
+            <label>Mata Pelajaran:</label>
+            <input type="text" id="mapel">
+        </div>
+
+        <div class="form-group">
+            <label>Kelas:</label>
+            <select id="kelas">
+                <option value="5Bi">5Bi</option>
+                <option value="5Ba">5Ba</option>
+                <option value="5Ca">5Ca</option>
+                <option value="6Ba">6Ba</option>
+                <option value="6Ca">6Ca</option>
+                <option value="6Bi">6Bi</option>
+                <option value="6Ci">6Ci</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Tujuan Pembelajaran:</label>
+            <textarea id="tujuanPembelajaran" rows="4"></textarea>
+        </div>
 
             <!-- Assessment Criteria -->
             <div class="assessment-section">
@@ -161,89 +346,149 @@
                     <textarea placeholder="Catatan tambahan..." rows="2"></textarea>
                 </div>
 
-                <!-- Additional criteria sections following the same pattern -->
-                <!-- Image Upload Section -->
-                <div class="form-group">
-                    <h3>Dokumentasi</h3>
-                    <input type="file" id="imageInput" accept="image/*" multiple>
-                    <div class="image-preview" id="imagePreview"></div>
-                    
-                    <div class="camera-container">
-                        <button type="button" id="startCamera">Buka Kamera</button>
-                        <video id="video" style="display: none"></video>
-                        <button type="button" id="captureImage" style="display: none">Ambil Foto</button>
-                        <canvas id="canvas" style="display: none"></canvas>
-                    </div>
-                </div>
-            </div>
+        <div class="form-group">
+            <label>Gambar</label>
+            <input type="file" id="imageInput" accept="image/*" multiple style="display: none">
+            <button class="btn" onclick="document.getElementById('imageInput').click()">Input Gambar</button>
+            <button class="btn" onclick="openCamera()">Buka Kamera</button>
+            <div id="imagePreview" class="image-preview"></div>
+            <div id="camera-container"></div>
+        </div>
 
-            <button type="button" id="generatePDF">Download Naqd (PDF)</button>
-        </form>
+        <div class="form-group">
+            <label>Data Peserta Didik:</label>
+            <input type="file" id="csvFile" accept=".csv">
+            <button onclick="tambahPesertaDidik()">Tambah Peserta Didik</button>
+        </div>
+
+        <table id="nilaiTable">
+                <tr>
+                    <th>Nama Peserta Didik</th>
+                    <th>Nilai</th>
+                </tr>
+            <tbody id="nilaiTableBody"></tbody>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <button onclick="generatePDF()">Generate PDF</button>
+            <button onclick="generateNilaiPDF()">PDF Nilai Harian</button>
+            <button onclick="generateSertifikat()">Sertifikat</button>
+        </div>
     </div>
 
+    <style>
+    </style>
+
     <script>
-        // Image upload handling
+        // Variabel global untuk menyimpan gambar
+        let images = [];
+        let videoStream = null;
+
+        // Event listener untuk input gambar
         document.getElementById('imageInput').addEventListener('change', function(e) {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '';
-            
-            for (const file of e.target.files) {
+            const files = e.target.files;
+            handleImageFiles(files);
+        });
+
+        // Fungsi untuk menangani file gambar
+        function handleImageFiles(files) {
+            for (let file of files) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = document.createElement('img');
-                    img.src = event.target.result;
-                    preview.appendChild(img);
-                }
+                reader.onload = function(e) {
+                    images.push(e.target.result);
+                    updateImagePreview();
+                };
                 reader.readAsDataURL(file);
             }
-        });
+        }
 
-        // Camera handling
-        const startCamera = document.getElementById('startCamera');
-        const video = document.getElementById('video');
-        const captureButton = document.getElementById('captureImage');
-        const canvas = document.getElementById('canvas');
-
-        startCamera.addEventListener('click', async function() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                video.style.display = 'block';
-                captureButton.style.display = 'block';
-                video.play();
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                alert('Error accessing camera. Please make sure you have granted camera permissions.');
-            }
-        });
-
-        captureButton.addEventListener('click', function() {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Fungsi untuk membuka kamera
+        function openCamera() {
+            const container = document.getElementById('camera-container');
             
+            // Bersihkan container kamera jika sudah ada
+            container.innerHTML = '';
+            
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    videoStream = stream;
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.autoplay = true;
+                    
+                    const captureBtn = document.createElement('button');
+                    captureBtn.textContent = 'Ambil Foto';
+                    captureBtn.className = 'btn';
+                    
+                    container.appendChild(video);
+                    container.appendChild(captureBtn);
+                    
+                    captureBtn.onclick = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0);
+                        images.push(canvas.toDataURL('image/jpeg'));
+                        updateImagePreview();
+                        
+                        // Hentikan stream kamera
+                        videoStream.getTracks().forEach(track => track.stop());
+                        container.innerHTML = '';
+                    };
+                })
+                .catch(function(err) {
+                    alert('Error mengakses kamera: ' + err.message);
+                });
+        }
+
+        // Fungsi untuk memperbarui preview gambar
+        function updateImagePreview() {
             const preview = document.getElementById('imagePreview');
-            const img = document.createElement('img');
-            img.src = canvas.toDataURL('image/png');
-            preview.appendChild(img);
-        });
+            preview.innerHTML = '';
+            images.forEach((image, index) => {
+                const img = document.createElement('img');
+                img.src = image;
+                preview.appendChild(img);
+            });
+        }
 
-        // PDF Generation
-document.getElementById('generatePDF').addEventListener('click', function () {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+        // Fungsi untuk menghasilkan PDF
+        function generatePDF() {
+            const namaGuru = document.getElementById('namaGuru').value;
+            const tanggalMengajar = document.getElementById('tanggalMengajar').value;
+            const mapel = document.getElementById('mapel').value;
+            const kelas = document.getElementById('kelas').value;
 
-    // Add basic information to PDF
-    doc.setFontSize(18);
-    doc.text('EvalTeach', 105, 20, { align: 'center' });
+            // Validasi input
+            if (!namaGuru) {
+                alert('Mohon lengkapi semua field yang wajib diisi!');
+                return;
+            }
 
-    doc.setFontSize(12);
-    doc.text(`Muntaqid: ${document.getElementById('muntaqid').value}`, 20, 40);
-    doc.text(`Pengajar: ${document.getElementById('pengajar').value}`, 20, 50);
-    doc.text(`Tanggal: ${document.getElementById('tanggal').value}`, 20, 60);
-    doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, 20, 70);
-    doc.text(`Kelas: ${document.getElementById('kelas').value}`, 20, 80);
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Header
+            doc.setFontSize(16);
+            doc.text('PROSES PELAKSANAAN PEMBELAJARAN KELAS <br> _P3K_', 105, 20, { align: 'center' });
+
+            // Informasi RPP
+            doc.setFontSize(12);
+            const info = [
+                `Nama Muntaqid: ${muntaqid}`,
+                `Nama Guru: ${namaGuru}`,
+                `Tanggal Mengajar: ${tanggalMengajar}`,
+                `Mata Pelajaran: ${mapel}`,
+                `Kelas: ${kelas}`
+            ];
+
+            info.forEach((text, index) => {
+                doc.text(text, 20, 40 + (index * 10));
+            });
 
     // Add Assessment Criteria to PDF
     let yPosition = 100; // Starting Y position for criteria
@@ -280,114 +525,154 @@ document.getElementById('generatePDF').addEventListener('click', function () {
         yPosition += 10; // Add spacing between criteria
     });
 
-    // Add images to PDF
-    const preview = document.getElementById('imagePreview');
-    const images = preview.getElementsByTagName('img');
+            // Tambahkan gambar jika ada
+            let yPos = 80;
+            images.forEach((image, index) => {
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                doc.addImage(image, 'JPEG', 20, yPos, 170, 80);
+                yPos += 90;
+            });
 
-    for (let i = 0; i < images.length; i++) {
-        if (yPosition > 250) { // Add new page if content exceeds page height
-            doc.addPage();
-            yPosition = 20;
+            // Simpan PDF
+            doc.save('rpp.pdf');
         }
-        try {
-            doc.addImage(images[i].src, 'JPEG', 20, yPosition, 170, 100);
-            yPosition += 110;
-        } catch (e) {
-            console.error('Error adding image to PDF:', e);
+
+        // Tambah peserta didik
+        function tambahPesertaDidik() {
+            const tbody = document.getElementById('nilaiTableBody');
+            const row = tbody.insertRow();
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            
+            cell1.innerHTML = '<input type="text" placeholder="Nama Peserta Didik">';
+            cell2.innerHTML = '<input type="number" placeholder="Nilai">';
+        }
+
+        // Generate PDF Nilai
+function generateNilaiPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4'); // Format A4
+
+    // Header PDF Nilai Harian
+    doc.setFontSize(16);
+    doc.text('DAFTAR NILAI HARIAN', 105, 20, { align: 'center' });
+
+    // Informasi Dasar
+    doc.setFontSize(12);
+    doc.text(`Nama Guru: ${document.getElementById('namaGuru').value}`, 20, 50);
+    doc.text(`Tanggal: ${document.getElementById('tanggalMengajar').value}`, 20, 60);
+    doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, 20, 70);
+    doc.text(`Kelas: ${document.getElementById('kelas').value}`, 20, 80);
+
+    // Tabel Nilai
+    doc.setFontSize(14);
+    doc.text('Daftar Nilai Peserta Didik:', 20, 90);
+    doc.setFontSize(12);
+
+    const tbody = document.getElementById('nilaiTableBody');
+    let y = 100; // Posisi awal untuk tabel nilai
+    let totalNilai = 0; // Untuk menghitung total nilai
+    let jumlahPeserta = 0; // Untuk menghitung jumlah peserta
+
+    // Loop melalui setiap baris tabel nilai
+    for (let i = 0; i < tbody.rows.length; i++) {
+        const nama = tbody.rows[i].cells[0].querySelector('input').value;
+        const nilai = parseFloat(tbody.rows[i].cells[1].querySelector('input').value);
+
+        // Tambahkan nama dan nilai ke PDF
+        doc.text(`${nama}: ${nilai}`, 20, y);
+        y += 10;
+
+        // Hitung total nilai dan jumlah peserta
+        if (!isNaN(nilai)) {
+            totalNilai += nilai;
+            jumlahPeserta++;
+        }
+
+        // Jika konten melebihi batas halaman, tambahkan halaman baru
+        if (y > 280) {
+            doc.addPage();
+            y = 20; // Reset posisi y untuk halaman baru
         }
     }
 
-});
-</script>
-<script>
-    document.getElementById('generatePDF').addEventListener('click', function () {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4'); // Set ukuran ke A4
+    // Hitung rata-rata nilai
+    const rataRata = jumlahPeserta > 0 ? (totalNilai / jumlahPeserta).toFixed(2) : 0;
 
-    // Margin dan ukuran halaman
-    const margin = 20; // Margin 20mm
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let yPosition = margin; // Posisi Y awal
+    // Tambahkan rata-rata nilai ke PDF
+    doc.setFontSize(14);
+    doc.text(`Rata-rata Nilai: ${rataRata}`, 20, y + 10);
 
-    // Fungsi untuk menambahkan halaman baru
-    const addNewPage = () => {
-        doc.addPage();
-        yPosition = margin; // Reset posisi Y ke margin
-    };
+    // Simpan PDF
+    doc.save('nilai-harian.pdf');
+}
+        // Generate Sertifikat
+        function generateSertifikat() {
+            const { jsPDF } = window.jspdf;
+            
+            // Dapatkan nilai tertinggi dan terendah
+            const nilai = Array.from(document.getElementById('nilaiTableBody').rows)
+                .map(row => ({
+                    nama: row.cells[0].querySelector('input').value,
+                    nilai: parseInt(row.cells[1].querySelector('input').value)
+                }))
+                .sort((a, b) => b.nilai - a.nilai);
 
-    // Add basic information to PDF
-    doc.setFontSize(18);
-    doc.text('EvalTeach', pageWidth / 2, yPosition, { align: 'center' });
-    yPosition += 15;
+            // Generate sertifikat untuk nilai tertinggi
+            const docTertinggi = new jsPDF();
+            docTertinggi.setFontSize(24);
+            docTertinggi.text('SERTIFIKAT PENGHARGAAN', 105, 50, { align: 'center' });
+            docTertinggi.setFontSize(16);
+            docTertinggi.text(`Diberikan kepada:`, 105, 70, { align: 'center' });
+            docTertinggi.text(`${nilai[0].nama}`, 105, 80, { align: 'center' });
+            docTertinggi.text(`Nilai: ${nilai[0].nilai}`, 105, 90, { align: 'center' });
+            docTertinggi.text('Selamat atas prestasi cemerlang!', 105, 110, { align: 'center' });
+            docTertinggi.save('sertifikat-tertinggi.pdf');
 
-    doc.setFontSize(12);
-    doc.text(`Muntaqid: ${document.getElementById('muntaqid').value}`, margin, yPosition);
-    yPosition += 10;
-    doc.text(`Pengajar: ${document.getElementById('pengajar').value}`, margin, yPosition);
-    yPosition += 10;
-    doc.text(`Tanggal: ${document.getElementById('tanggal').value}`, margin, yPosition);
-    yPosition += 10;
-    doc.text(`Mata Pelajaran: ${document.getElementById('mapel').value}`, margin, yPosition);
-    yPosition += 10;
-    doc.text(`Kelas: ${document.getElementById('kelas').value}`, margin, yPosition);
-    yPosition += 20;
-
-    // Add Assessment Criteria to PDF
-    const criteriaItems = document.querySelectorAll('.criteria-item');
-
-    criteriaItems.forEach((item) => {
-        // Cek jika perlu halaman baru
-        if (yPosition > pageHeight - margin) {
-            addNewPage();
+            // Generate sertifikat untuk 2 nilai terendah
+            nilai.slice(-2).forEach((siswa, index) => {
+                const docTerendah = new jsPDF();
+                docTerendah.setFontSize(24);
+                docTerendah.text('SERTIFIKAT SEMANGAT', 105, 50, { align: 'center' });
+                docTerendah.setFontSize(16);
+                docTerendah.text(`Diberikan kepada:`, 105, 70, { align: 'center' });
+                docTerendah.text(`${siswa.nama}`, 105, 80, { align: 'center' });
+                docTerendah.text(`Nilai: ${siswa.nilai}`, 105, 90, { align: 'center' });
+                docTerendah.text('Terus semangat dan tingkatkan prestasimu!', 105, 110, { align: 'center' });
+                docTerendah.save(`sertifikat-semangat-${index + 1}.pdf`);
+            });
         }
 
-        // Add criteria title
-        const title = item.querySelector('h3').textContent;
-        doc.setFontSize(12);
-        doc.text(title, margin, yPosition);
-        yPosition += 10;
-
-        // Add checkbox options
-        const checkboxes = item.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach((checkbox) => {
-            const label = checkbox.nextSibling.textContent.trim();
-            const isChecked = checkbox.checked ? '[X]' : '[ ]';
-            doc.text(`${isChecked} ${label}`, margin + 5, yPosition);
-            yPosition += 10;
+        // CSV File Handler
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                const csv = event.target.result;
+                const rows = csv.split('\n');
+                const tbody = document.getElementById('nilaiTableBody');
+                tbody.innerHTML = '';
+                
+                rows.forEach(row => {
+                    if (row.trim()) {
+                        const tr = tbody.insertRow();
+                        const cell1 = tr.insertCell(0);
+                        const cell2 = tr.insertCell(1);
+                        
+                        cell1.innerHTML = `<input type="text" value="${row.trim()}" readonly>`;
+                        cell2.innerHTML = '<input type="number" placeholder="Nilai">';
+                    }
+                });
+            };
+            
+            reader.readAsText(file);
         });
 
-        // Add additional notes
-        const notes = item.querySelector('textarea').value;
-        if (notes) {
-            doc.text(`Catatan: ${notes}`, margin + 5, yPosition);
-            yPosition += 15;
-        }
-
-        yPosition += 10; // Add spacing between criteria
-    });
-
-    // Add images to PDF
-    const preview = document.getElementById('imagePreview');
-    const images = preview.getElementsByTagName('img');
-
-    for (let i = 0; i < images.length; i++) {
-        // Cek jika perlu halaman baru
-        if (yPosition > pageHeight - margin - 100) { // 100 adalah tinggi gambar
-            addNewPage();
-        }
-
-        try {
-            doc.addImage(images[i].src, 'JPEG', margin, yPosition, 170, 100);
-            yPosition += 110; // Tinggi gambar + margin bawah
-        } catch (e) {
-            console.error('Error adding image to PDF:', e);
-        }
-    }
-
-    // Save the PDF
-    doc.save('EvalTeach.pdf');
-});
-</script>
+    </script>
 </body>
+</head>
 </html>
